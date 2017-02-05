@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using CURDOPERATION.Models;
 using CURDOPERATION.Repository;
+using System.Net;
 
 namespace CURDOPERATION.Controllers
 {
@@ -34,19 +35,27 @@ namespace CURDOPERATION.Controllers
         [HttpPost]
         public ActionResult AddProducts(Models.ProductsModel prod)
         {
+            string retmsg = string.Empty;
             try
             {
                 if (ModelState.IsValid)
                 {
                     Repository.PrdRepository PrdtRepo = new Repository.PrdRepository();
-                    if (PrdtRepo.AddProducts(prod))
-                    {
+                    PrdtRepo.AddProducts(prod, out retmsg);
+                  
                         // ViewBag.Message = "Data inserted Succesfully";
-                        RedirectToAction("GetProducts", "Products");
+                        if (retmsg == "ok")
+                        {
+                           ViewBag.Message = "Data inserted Succesfully";
+                           return RedirectToAction("GetProducts", "Products");
+                         }
+                         else {
+                            ViewBag.Message = retmsg;   
                     }
+                   
                 }
-
                 return View();
+
             }
             catch
             {
@@ -55,20 +64,26 @@ namespace CURDOPERATION.Controllers
         }
 
         // GET: Products/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult UpdateProduct(int productID )
         {
-            return View();
+            PrdRepository rpd = new Repository.PrdRepository();
+            return View(rpd.GetProducts().Find (product=>product.productID== productID));
+                  
         }
 
         // POST: Products/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public ActionResult UpdateProduct(int product,ProductsModel objupd)
         {
             try
             {
-                // TODO: Add update logic here
+              
+                    Repository.PrdRepository PrdtRepo = new Repository.PrdRepository();
 
-                return RedirectToAction("Index");
+                    PrdtRepo.UpdProduct(objupd);
+               
+
+                return RedirectToAction("GetProduct");
             }
             catch
             {

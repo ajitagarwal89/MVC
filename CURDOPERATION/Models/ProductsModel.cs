@@ -15,5 +15,9 @@ namespace CURDOPERATION.Models
         public string ProductColor { get; set; }
         [Required(ErrorMessage = "Product price can not be Empty")]
         public int ProductListPrice { get; set; }
+        public int productID { get; set; }
+        public string errormsg { get; set; }
+
+
     }
 }
